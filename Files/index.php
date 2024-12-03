@@ -52,6 +52,29 @@ $section = isset($_GET['section']) ? $_GET['section'] : 'home';
             case 'mia':
                 echo '<h2>Mitarbeiter werden</h2>';
                 echo '<p>Wenn Sie Interesse haben, Mitarbeiter zu werden, kontaktieren Sie uns bitte!</p>';
+                echo '<form method="POST" action="">';
+                echo '<label for="code">Code:   </label>';
+                echo '<input type="text" id="code" name="code" required>';
+                echo '<button type="submit">Einreichen</button>';
+                echo '</form>';
+          
+                
+                if (isset($_POST['code']) && $_POST['code'] === 'Racedays24') {
+                    echo '<div class="info-container">';
+                    echo '<p>Hier finden Sie wichtige Informationen zu den verschiedenen Bereichen der RaceDays:</p>';
+                    echo '<ul class="info-list">';
+                    echo '<li><a href="https://docs.google.com/spreadsheets/d/11WD0oX-kBAWWdzyax5D5tSnaUc8qnUh8/edit?usp=sharing&ouid=107881440527806522583&rtpof=true&sd=true" target="_blank">Küche</a></li>';
+                    echo '<li><a href="https://docs.google.com/spreadsheets/d/1zO1QiYiBHmlmoakZjikYvCwwzT51ugE3/edit?usp=sharing&ouid=107881440527806522583&rtpof=true&sd=true" target="_blank">Café Theke</a></li>';
+                    echo '<li><a href="https://docs.google.com/spreadsheets/d/1n3-zakQYwaCxrh9pEH8Pv6jesHiPdKjR/edit?usp=sharing&ouid=107881440527806522583&rtpof=true&sd=true" target="_blank">Tickets</a></li>';
+                    echo '<li><a href="https://docs.google.com/spreadsheets/d/1o2Pr5g8lfIbdlV8vXIqCLG7U3o6U29LK/edit?gid=386618619#gid=386618619" target="_blank">Rennleitung</a></li>';
+                    echo '<li><a href="https://docs.google.com/spreadsheets/d/1v1NqYZGMGi6gUDu0gWVmK_kvJe1iytSA/edit?gid=365652314#gid=365652314" target="_blank">Streckenposten/AutoEinsetzen</a></li>';
+                    echo '</ul>';
+                    echo '</div>';
+                } else {
+                    echo '<div class="error-container">';
+                    echo '<p class="error-message">Melde dich bei einem Mitarbeiter, um den Code zu bekommen.</p>';
+                    echo '</div>';
+                }
                 break;
             case 'feedback':
                 echo '<h2>Feedback</h2>';
