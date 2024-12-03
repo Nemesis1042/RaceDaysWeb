@@ -24,7 +24,7 @@ Das Projekt besteht aus den folgenden Dateien:
 
 1. **Voraussetzungen:**
 
-   - Ein Webserver (z. B. Apache oder Nginx).
+   - Ein Webserver
    - PHP ist auf dem Server installiert.
 2. **Setup:**
 

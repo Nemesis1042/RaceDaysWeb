@@ -21,7 +21,7 @@ $section = isset($_GET['section']) ? $_GET['section'] : 'home';
                 <li><a href="?section=oeffnungszeiten">Öffnungszeiten</a></li>
                 <li><a href="?section=mia">Mitarbeiter werden</a></li>
                 <li><a href="?section=feedback">Feedback</a></li>
-                <li><a href="statistik.php">Statistik</a></li>
+                <li><a href="?section=statistik">Statistik</a></li>
                 <li><a href="?section=ueber_uns">Über uns</a></li>
                 <li><a href="?section=essen">Essen</a></li>
                 <li><a href="?section=sponsoren">Sponsoren</a></li>
@@ -58,14 +58,8 @@ $section = isset($_GET['section']) ? $_GET['section'] : 'home';
                 echo '<p>Wir freuen uns über Ihr Feedback. Schreiben Sie uns!</p>';
                 break;
             case 'statistik':
-                echo '<h2>Statistik</h2>';
-                echo '<p>Persönliche Statistik:</p>';
-                echo '<ul>';
-                echo '<li>Gefahrene Rennen: ' . rand(10, 100) . '</li>';
-                echo '<li>Beste Zeit: ' . rand(10, 20) . ' Sekunden</li>';
-                echo '<li>Gesamte Runden: ' . rand(100, 500) . '</li>';
-                echo '</ul>';
-                break;
+            echo '<script>window.location.href = "statistik.php";</script>';
+            break;
             case 'ueber_uns':
                 echo '<h2>Über uns</h2>';
                 echo '<p>Wir sind ein ehrenamtliches Team, das spannende Rennen für die ganze Familie organisiert.</p>';
