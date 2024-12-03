@@ -1,13 +1,12 @@
 <?php
-// Statistik-Seite mit Login-Bereich
 session_start();
 
-if (!isset($_SESSION['loggedin'])) {
+// Redirect to login if not logged in
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header('Location: login.php');
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -19,19 +18,20 @@ if (!isset($_SESSION['loggedin'])) {
 <body>
     <header>
         <h1>Statistik</h1>
+        <nav>
+            <ul>
+                <li><a href="index.php">Logout</a></li>
+            </ul>
+        </nav>
     </header>
     <main>
-        <h2>Ihre persönliche Statistik</h2>
-        <p>Hier sehen Sie Ihre persönlichen Rennstatistiken:</p>
+        <h2>Willkommen, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
+        <p>Ihre persönliche Statistik:</p>
         <ul>
-            <li>Gefahrene Rennen: <?php echo rand(10, 100); ?> </li>
-            <li>Beste Zeit: <?php echo rand(10, 20) . " Sekunden"; ?></li>
+            <li>Gefahrene Rennen: <?php echo rand(10, 100); ?></li>
+            <li>Beste Zeit: <?php echo rand(10, 20); ?> Sekunden</li>
             <li>Gesamte Runden: <?php echo rand(100, 500); ?></li>
         </ul>
-        <a href="logout.php">Logout</a>
     </main>
-    <footer>
-        <p>© 2024 RaceDays - CVJM Steinheim</p>
-    </footer>
 </body>
 </html>

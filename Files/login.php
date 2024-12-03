@@ -1,30 +1,20 @@
 <?php
 session_start();
 
-// SQLite-Datenbank verbinden oder erstellen
-$db = new PDO('sqlite:./data/database.sqlite');
-
-// Tabelle für Benutzer erstellen, falls sie nicht existiert
-$db->exec("CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL
-)");
-
-// Beispiel-Benutzer hinzufügen, falls Tabelle leer ist
-$result = $db->query("SELECT COUNT(*) as count FROM users");
-$row = $result->fetch();
-if ($row['count'] == 0) {
-    // Passwort sicher hashen
-    $hashedPassword = password_hash('password', PASSWORD_DEFAULT);
-    $db->exec("INSERT INTO users (username, password) VALUES ('admin', '$hashedPassword')");
+// Redirect to the protected page if already logged in
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
+    header('Location: statistik.php');
+    exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Benutzer aus der Datenbank abrufen
+    // Database connection
+    $db = new PDO('sqlite:./database.sqlite');
+
+    // Fetch user by username
     $stmt = $db->prepare("SELECT * FROM users WHERE username = :username");
     $stmt->bindParam(':username', $username);
     $stmt->execute();
@@ -32,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['loggedin'] = true;
+        $_SESSION['username'] = $username; // Optional: Store username
         header('Location: statistik.php');
         exit;
     } else {
@@ -39,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
