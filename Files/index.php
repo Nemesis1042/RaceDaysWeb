@@ -50,15 +50,8 @@ $section = isset($_GET['section']) ? $_GET['section'] : 'home';
                 echo '<p>Montag - Freitag: 10:00 - 18:00 Uhr<br>Samstag: 12:00 - 20:00 Uhr</p>';
                 break;
             case 'mia':
-                echo '<h2>Mitarbeiter werden</h2>';
-                echo '<p>Wenn Sie Interesse haben, Mitarbeiter zu werden, kontaktieren Sie uns bitte!</p>';
-                echo '<form method="POST" action="">';
-                echo '<label for="code">Code:   </label>';
-                echo '<input type="text" id="code" name="code" required>';
-                echo '<button type="submit">Einreichen</button>';
-                echo '</form>';
-          
                 
+
                 if (isset($_POST['code']) && $_POST['code'] === 'Racedays24') {
                     echo '<div class="info-container">';
                     echo '<p>Hier finden Sie wichtige Informationen zu den verschiedenen Bereichen der RaceDays:</p>';
@@ -71,6 +64,13 @@ $section = isset($_GET['section']) ? $_GET['section'] : 'home';
                     echo '</ul>';
                     echo '</div>';
                 } else {
+                    echo '<h2>Mitarbeiter werden</h2>';
+                    echo '<p>Wenn Sie Interesse haben, Mitarbeiter zu werden, kontaktieren Sie uns bitte!</p>';
+                    echo '<form method="POST" action="" class="">';
+                    echo '<label for="code">Code:   </label>';
+                    echo '<input type="text" id="code" name="code" required>';
+                    echo '<button type="submit">Einreichen</button>';
+                    echo '</form>';
                     echo '<div class="error-container">';
                     echo '<p class="error-message">Melde dich bei einem Mitarbeiter, um den Code zu bekommen.</p>';
                     echo '</div>';
@@ -79,6 +79,44 @@ $section = isset($_GET['section']) ? $_GET['section'] : 'home';
             case 'feedback':
                 echo '<h2>Feedback</h2>';
                 echo '<p>Wir freuen uns über Ihr Feedback. Schreiben Sie uns!</p>';
+
+                // Feedback-Formular
+                echo '<form method="POST" action="">';
+                echo '<label for="name">Ihr Name:</label>';
+                echo '<input type="text" id="name" name="name" required>';
+
+                echo '<label for="email">Ihre E-Mail-Adresse:</label>';
+                echo '<input type="email" id="email" name="email" required>';
+
+                echo '<label for="message">Ihre Nachricht:</label>';
+                echo '<textarea id="message" name="message" rows="5" required></textarea>';
+
+                echo '<button type="submit">Absenden</button>';
+                echo '</form>';
+
+                // E-Mail-Versand
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $to = 'feedback@race-days-test.coM'; // Ersetze durch deine E-Mail-Adresse
+                    $subject = 'Feedback von der Website';
+
+                    // Benutzereingaben verarbeiten
+                    $name = htmlspecialchars($_POST['name']);
+                    $email = htmlspecialchars($_POST['email']);
+                    $message = htmlspecialchars($_POST['message']);
+
+                    // E-Mail-Inhalt
+                    $body = "Name: $name\nE-Mail: $email\n\nNachricht:\n$message";
+
+                    // E-Mail-Header
+                    $headers = "From: $email";
+
+                    // Senden der E-Mail
+                    if (mail($to, $subject, $body, $headers)) {
+                        echo '<p class="success">Vielen Dank für Ihr Feedback!</p>';
+                    } else {
+                        echo '<p class="error">Es gab ein Problem beim Senden Ihrer Nachricht. Bitte versuchen Sie es später erneut.</p>';
+                    }
+                }
                 break;
             case 'statistik':
             echo '<script>window.location.href = "statistik.php";</script>';

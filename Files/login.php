@@ -43,14 +43,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1>Login</h1>
     </header>
     <main>
-        <form method="POST" action="">
+        <form method="POST" action="" class="info-container">
             <label for="username">Benutzername:</label>
             <input type="text" id="username" name="username" required>
             <label for="password">Passwort:</label>
             <input type="password" id="password" name="password" required>
+            <br>
+            <br>
             <button type="submit">Login</button>
         </form>
-        <?php if (isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
+        <button onclick="location.href='index.php'" class="info-list">Zurück zur Startseite</button>
+        <?php if (isset($error)) echo "<div class='error-container'><p class='error-message'>$error</p></div>"; ?>
     </main>
 </body>
 </html>
