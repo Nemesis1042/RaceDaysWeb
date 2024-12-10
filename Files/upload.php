@@ -6,102 +6,97 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 // SQLite Database Connection
 $db = new SQLite3('race_data.db');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
-    $file = $_FILES['excel_file']['tmp_name'];
+// Define the fixed file path for the Excel file
+$filePath = '/home/arkatosh/Documents/Code/GIT/RaceDaysWeb/Files/RaceDays2024.xlsx';
 
-    // Debug: Check if the file exists
-    if (!file_exists($file)) {
-        die("Error: Uploaded file not found!");
+// Check if the file exists
+if (!file_exists($filePath)) {
+    die("Error: The specified file '{$filePath}' does not exist!");
+}
+
+try {
+    // Load the Excel file
+    $spreadsheet = IOFactory::load($filePath);
+
+    // Startdatum und Enddatum festlegen
+    //$startDate = new DateTime('2025-01-02'); // Startdatum für Tag 1
+    //$endDate = new DateTime('2025-01-05');   // Enddatum (Tag 4)
+
+    $startDate = new DateTime('2024-12-10'); // Startdatum für Tag 1
+    $endDate = new DateTime('2025-01-14');   // Enddatum (Tag 4)
+
+    // Heutiges Datum prüfen
+    $currentDate = new DateTime();
+
+    if ($currentDate < $startDate || $currentDate > $endDate) {
+        throw new Exception("No matching sheet for today's date: " . $currentDate->format('d.m.Y'));
     }
 
-    try {
-        $spreadsheet = IOFactory::load($file);
-        $sheet = $spreadsheet->getActiveSheet();
-        $data = $sheet->toArray(null, true, true, true);
+    // Berechnen, welcher Tag heute ist
+    $dayDiff = $currentDate->diff($startDate)->days + 1; // Differenz in Tagen (Tag 1 = Startdatum)
+    $sheetName = "Tag $dayDiff"; // Beispiel: "Tag 1", "Tag 2", ...
 
-        // Debug: Check the Excel data
-        echo "<h2>Excel Data Preview (Debugging)</h2>";
-        echo "<pre>";
-        print_r($data);
-        echo "</pre>";
+    // Sheet mit dem berechneten Namen laden
+    $sheet = $spreadsheet->getSheetByName($sheetName);
+    if (!$sheet) {
+        throw new Exception("Sheet with name '$sheetName' not found!");
+    }
 
-        // Clear the database before inserting new data
-        $db->exec("DELETE FROM race_table");
+    $data = $sheet->toArray(null, true, true, true);
 
-        echo "<table border='1' style='border-collapse: collapse; width: 100%;'>";
-        echo "<tr><th>Geplante Startzeit</th> <th>Aktuelle Startzeit</th><th>No</th><th>Bahn</th><th>Vorname</th><th>Name</th><th>M/W</th><th>Alter</th><th>Bestzeit</th></tr>";
+    // Display the Excel data for debugging
+    echo "<h2>Excel Data Preview</h2>";
+    echo "<table border='1' style='border-collapse: collapse; width: 100%;'>";
+    echo "<tr><th>Geplante Startzeit</th> <th>Aktuelle Startzeit</th><th>No</th><th>Bahn</th><th>Vorname</th><th>Name</th><th>M/W</th><th>Alter</th><th>Bestzeit</th></tr>";
 
-        foreach ($data as $rowIndex => $row) {
-            // Skip the header row (index 1)
-            if ($rowIndex === 1) continue;
+    // Clear the database before inserting new data
+    $db->exec("DELETE FROM race_table");
 
-            // Debug: Check the current row being processed
-            echo "<tr>
-                    <td>{$row['A']}</td>
-                    <td>{$row['B']}</td>
-                    <td>{$row['C']}</td>
-                    <td>{$row['D']}</td>
-                    <td>{$row['E']}</td>
-                    <td>{$row['F']}</td>
-                    <td>{$row['G']}</td>
-                    <td>{$row['H']}</td>
-                    <td>{$row['I']}</td>
-                  </tr>";
+    foreach ($data as $rowIndex => $row) {
+        // Skip the header row (index 1)
+        if ($rowIndex === 1) continue;
 
-            // Insert into the database
-            $stmt = $db->prepare("INSERT INTO race_table (startzeit_geplant, startzeit_tatsaechlich, no, bahn, vorname, name, mw, age, bestzeit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            
-            if ($stmt === false) {
-                die("Error: Failed to prepare statement!");
-            }
+        // Debug: Display each row being processed
+        echo "<tr>
+                <td>{$row['A']}</td>
+                <td>{$row['B']}</td>
+                <td>{$row['C']}</td>
+                <td>{$row['D']}</td>
+                <td>{$row['E']}</td>
+                <td>{$row['F']}</td>
+                <td>{$row['G']}</td>
+                <td>{$row['H']}</td>
+                <td>{$row['I']}</td>
+            </tr>";
 
-            $stmt->bindValue(1, $row['A'], SQLITE3_TEXT);
-            $stmt->bindValue(2, $row['B'], SQLITE3_TEXT);
-            $stmt->bindValue(3, $row['C'], SQLITE3_INTEGER);
-            $stmt->bindValue(4, $row['D'], SQLITE3_TEXT);
-            $stmt->bindValue(5, $row['E'], SQLITE3_TEXT);
-            $stmt->bindValue(6, $row['F'], SQLITE3_TEXT);
-            $stmt->bindValue(7, $row['G'], SQLITE3_TEXT);
-            $stmt->bindValue(8, $row['H'], SQLITE3_TEXT);
-            $stmt->bindValue(9, $row['I'], SQLITE3_TEXT);
+        // Insert into the database
+        $stmt = $db->prepare("INSERT INTO race_table (startzeit_geplant, startzeit_tatsaechlich, no, bahn, vorname, name, mw, age, bestzeit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-            $result = $stmt->execute();
-
-            // Debug: Check if the insert was successful
-            if (!$result) {
-                echo "<p>Error inserting row {$rowIndex}: " . $db->lastErrorMsg() . "</p>";
-            }
+        if ($stmt === false) {
+            die("Error: Failed to prepare statement!");
         }
-        echo "</table>";
-        echo "<p>Data has been successfully saved into the database!</p>";
 
-    } catch (Exception $e) {
-        // Debug: Catch any exceptions during file loading or processing
-        die("Error: " . $e->getMessage());
+        $stmt->bindValue(1, $row['A'], SQLITE3_TEXT);
+        $stmt->bindValue(2, $row['B'], SQLITE3_TEXT);
+        $stmt->bindValue(3, $row['C'], SQLITE3_INTEGER);
+        $stmt->bindValue(4, $row['D'], SQLITE3_TEXT);
+        $stmt->bindValue(5, $row['E'], SQLITE3_TEXT);
+        $stmt->bindValue(6, $row['F'], SQLITE3_TEXT);
+        $stmt->bindValue(7, $row['G'], SQLITE3_TEXT);
+        $stmt->bindValue(8, $row['H'], SQLITE3_TEXT);
+        $stmt->bindValue(9, $row['I'], SQLITE3_TEXT);
+
+        $result = $stmt->execute();
+
+        if (!$result) {
+            echo "<p>Error inserting row {$rowIndex}: " . $db->lastErrorMsg() . "</p>";
+        }
     }
-} else {
-    echo "No file uploaded.";
+
+    echo "</table>";
+    echo "<p>Data has been successfully saved into the database!</p>";
+
+} catch (Exception $e) {
+    die("Error: " . $e->getMessage());
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Excel File</title>
-</head>
-<body>
-    <h1>Upload Excel File</h1>
-    <form action="" method="POST" enctype="multipart/form-data" id="auto-upload-form">
-        <input type="hidden" name="excel_file" id="excel_file" value="RaceDays2024.xlsx">
-    </form>
-
-    <script>
-        // Automatically submit the form after the page loads
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('auto-upload-form').submit();
-        });
-    </script>
-</body>
-</html>

@@ -47,7 +47,8 @@ $section = isset($_GET['section']) ? $_GET['section'] : 'home';
                 break;
             case 'oeffnungszeiten':
                 echo '<h2>Öffnungszeiten</h2>';
-                echo '<p>Montag - Freitag: 10:00 - 18:00 Uhr<br>Samstag: 12:00 - 20:00 Uhr</p>';
+                echo '<p>Do., 2. Januar 2025 - So., 5. Januar 2025</p>';
+                echo '<p>Täglich von 10:00 Uhr bis 19:00 Uhr.</p>';
                 break;
             case 'mia':
                 
