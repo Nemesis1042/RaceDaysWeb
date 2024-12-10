@@ -1,0 +1,19 @@
+{
+    "name": "arkatosh/files",
+    "description": "A web application for race day management",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Arkatosh\\Files\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Nemesis1042",
+            "email": "niklashardwig5@gmail.com"
+        }
+    ],
+    "require": {
+        "phpoffice/phpspreadsheet": "^3.6"
+    }
+}
